@@ -31,6 +31,8 @@ void setup() {
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
   pinMode(buzzPin, OUTPUT);
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, HIGH); // i hope it turns it off
   //pinMode(ledPin, OUTPUT);
   //digitalWrite(ledPin, LOW);
   digitalWrite(buzzPin, LOW);
@@ -49,8 +51,6 @@ void setup() {
   Blynk.begin(auth, ssid, pass);
   Serial.println("Connecting to Blynk...");
   timer.setInterval(1000L, checkAndNotify);
-  // timer.setInterval(3600000L, resetAlarmPH);
-  //timer.setInterval(500L, displayAlarmPH); unused in 1.4.3
   timer.setInterval(5000L, hourlyResetCheck);
   timer.setInterval(50000, checkLoopHealth);
 
@@ -188,11 +188,6 @@ void printAlarmHistory() {
   terminal.flush();
 }
 
-// void storeDistance(unsigned int distance) {
-//   distanceBuffer[distanceIndex] = distance;
-//   distanceIndex = (distanceIndex + 1) % DIST_BUFFER_SIZE;
-//   if(distanceIndex == 0) bufferFilled = true;
-// }
 //WiFi Watchdog
 void checkWiFiConnection() {
   if(serviceMode && terminalWatchdog) terminal.println("[WiFi Watchdog] Working...");
@@ -248,7 +243,6 @@ float measureDistance() {
 // Główna funkcja kontrolująca alarm – wywoływana w pętli głównej
 void checkAndNotify() {
   lastCheckTime = millis();
-
   if (!isArmed) {
     handleDisarmed();
     return;
@@ -345,7 +339,12 @@ void handleAlarmTriggered() {
   Blynk.virtualWrite(V0, 1);
   Serial.println("Blynk.virtualWrite(V0, 1)");
 
-  bool nightMode = nightModeEnabled && (hour() >= 22 || hour() < 6);
+  int h = hour();
+  bool nightMode = nightModeEnabled && (
+  (nmStart <= nmEnd) ? (h >= nmStart && h < nmEnd)  // ex. 8–18
+                     : (h >= nmStart || h < nmEnd)  // ex. 22–6
+  );
+
   for(int i = 0; i < 10; i++) {
     if(nightMode) {
       digitalWrite(buzzPin, HIGH);
@@ -503,6 +502,36 @@ BLYNK_WRITE(V4) {
       }
     } else if(terminalCommand == "alarm history") {
       printAlarmHistory();
+    } else if(terminalCommand.startsWith("nmset")) {
+      String args = terminalCommand.substring(5);
+      args.trim();
+
+      int spaceIdx = args.indexOf(" ");
+      if(spaceIdx == -1) {
+        terminal.println("Użycie: nmset <start_hour> <end_hour>");
+        return;
+      }
+
+      String startStr = args.substring(0, spaceIdx);
+      String endStr = args.substring(spaceIdx + 1);
+      startStr.trim();
+      endStr.trim();
+
+      int startHour = startStr.toInt();
+      int endHour = endStr.toInt();
+
+      if((startHour >= 0 && startHour <= 23) && (endHour >= 0 && endHour <= 23)) {
+        nmStart = startHour;
+        nmEnd = endHour;
+        terminal.print("Tryb nocny: ");
+        terminal.print(nmStart);
+        terminal.print(":00 - ");
+        terminal.print(nmEnd);
+        terminal.println(":00");
+      } else {
+        terminal.println("Błąd: godziny muszą być liczbami z zakresu 0-23");
+      }
+      terminal.flush();
     } else {
       terminal.println("Nieznana komenda.");
     }
@@ -555,6 +584,7 @@ void displayDigit(int digit) {
     digitalWrite(segments[i], bitRead(segmentsState, 6 - i)); //Sterowanie segmentami 
   }
 }
+
 // Odświeża wyświetlacz segmentowy, kiedy zmieni się alarmPH
 void updateDisplayOnChange() {
   if(alarmPH != lastAlarmPHDisplayed) {

@@ -8,7 +8,6 @@
 extern float distance;
 extern bool lastAlarmState;
 extern bool isArmed;
-extern bool nightModeEnabled;
 extern bool isBeeping;
 extern unsigned long beepStartTime;
 extern int beepDuration;
@@ -19,13 +18,13 @@ extern int alarmPH;
 extern int lastResetHour;
 extern int lastAlarmPHDisplayed;
 
+// Nightmode handling
+extern bool nightModeEnabled;
+extern int nmStart;
+extern int nmEnd;
+
 // Diagnostics
 extern int sensorFailCount;
-
-// Buffer
-// extern unsigned int distanceBuffer[];
-// extern int distanceIndex;
-// extern bool bufferFilled;
 
 // Service
 extern bool serviceMode;

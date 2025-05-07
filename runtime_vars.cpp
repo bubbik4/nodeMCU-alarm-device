@@ -4,7 +4,6 @@
 float distance = 0;
 bool lastAlarmState = false;
 bool isArmed = true;
-bool nightModeEnabled = true;
 bool isBeeping = false;
 unsigned long beepStartTime = 0;
 int beepDuration = 0;
@@ -14,12 +13,11 @@ int alarmPH = 0;
 int lastResetHour = -1;
 int lastAlarmPHDisplayed = -1;
 
-int sensorFailCount = 0;
+bool nightModeEnabled = true;
+int nmStart = 22;
+int nmEnd = 6;
 
-//const int DIST_BUFFER_SIZE = 30;
-// unsigned int distanceBuffer[DIST_BUFFER_SIZE];
-// int distanceIndex = 0;
-// bool bufferFilled = false;
+int sensorFailCount = 0;
 
 bool serviceMode = false;
 bool terminalWatchdog = false;

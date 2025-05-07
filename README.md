@@ -1,16 +1,25 @@
-# nodeMCU-alarm-devie
+# nodeMCU-alarm-device
 An alarm device controlled via Blynk app, supporting OTA updates, and featuring night mode, alarm counter, and much more
 
 
 # Changelog
 
-## Version 1.4.13 – 2024-04-19  
+---
+
+## Version 1.4.14 / 2024-05-07
+- **Added custom nightmode hours**. From now on **user can define nightmode start `<nmStart>` and end `<nmEnd>` time**.
+
+![Blynk terminal dashboard](../misc/blynkdash.png?raw=true)
+
+---
+
+## Version 1.4.13 / 2024-04-19  
 - **Added EEPROM storage** for `alarmPH` and `alarmPD` variables.  
 - Also stores **data about the last 10 alarms**.
 
 ---
 
-## Version 1.4.12 – 2025-04-19  
+## Version 1.4.12 / 2025-04-19  
 - **Code optimization for editability and modularity**.  
 - The `checkAndNotify` function was split into:  
   - `handleDisarmed`  
@@ -23,13 +32,13 @@ An alarm device controlled via Blynk app, supporting OTA updates, and featuring 
 
 ---
 
-## Version 1.4.11 – 2025-04-19  
+## Version 1.4.11 / 2025-04-19  
 - **Separated logical variables and configuration constants** into dedicated files (`config.h`, `runtime_vars.h/.cpp`).  
 - **Bug fixes**.
 
 ---
 
-## Version 1.4.10 – 2025-04-17  
+## Version 1.4.10 / 2025-04-17  
 - **Added night mode**: disables the buzzer between 22:00 and 6:00.  
 - Night mode can be **controlled via terminal**.
 
