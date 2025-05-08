@@ -181,8 +181,10 @@ void printAlarmHistory() {
     byte min = EEPROM.read(addr + 3);
     byte sec = EEPROM.read(addr + 4);
 
+    uint16_t distance = EEPROM.read(addr + 5) | (EEPROM.read(addr + 6) << 8);  // 2 bytes
+
     if (d > 0 && d <= 31 && m > 0 && m <= 12 && h < 24 && min < 60 && sec < 60) {
-      terminal.printf("%02d.%02d %02d:%02d:%02d\n", d, m, h, min, sec);
+      terminal.printf("%02d.%02d %02d:%02d:%02d - Odległość: %d cm\n", d, m, h, min, sec, distance);
     }
   }
   terminal.flush();
