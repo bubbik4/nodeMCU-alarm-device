@@ -4,6 +4,9 @@ An alarm device controlled via Blynk app, supporting OTA updates, and featuring 
 
 # Changelog
 
+## Version 1.4.15 / 2024-05-08
+- **Added distance log in alarm history**. Now reading the **alarm trigger distance from EEPROM**.
+
 ---
 
 ## Version 1.4.14 / 2024-05-07
